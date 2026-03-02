@@ -1,3 +1,8 @@
+-- Using %TYPE, declare variables to hold Name and Salary. Write a PL/SQL block to
+-- select the Name and Salary of an employee with E_ID = 2 into those variables and
+-- print the values. (using implicit cursor)
+
+
 -- Code begins
 SET SERVEROUTPUT ON;
 SET VERIFY OFF;
