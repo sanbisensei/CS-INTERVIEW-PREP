@@ -1,57 +1,49 @@
--- Write a PL/SQL program using an explicit cursor that retrieves all rows from the
--- EMPLOYEE table and checks each employee’s salary. If an employee's salary is less
--- than 7000, increase it by 500 using an UPDATE statement with a proper WHERE
--- clause to ensure only the matching row is updated. For each row processed, display a
--- message using DBMS_OUTPUT.PUT_LINE indicating whether the salary was
--- updated or not, based on the condition. The program should use cursor control
--- statements (OPEN, FETCH, EXIT WHEN, CLOSE) and conditional logic inside a
--- loop to handle per-row processing.
-
-
-
 SET SERVEROUTPUT ON;
 
 DECLARE
-    -- Define an explicit cursor to select all employees
+    -- Explicit cursor selecting necessary columns
     CURSOR emp_cursor IS
         SELECT employee_id, first_name, last_name, salary
         FROM employee;
 
-    -- Record variable to hold fetched row
-    emp_record emp_cursor%ROWTYPE;
+    -- Variables to hold each column
+    v_employee_id employee.employee_id%TYPE;
+    v_first_name  employee.first_name%TYPE;
+    v_last_name   employee.last_name%TYPE;
+    v_salary      employee.salary%TYPE;
 
 BEGIN
     -- Open the cursor
     OPEN emp_cursor;
 
     LOOP
-        -- Fetch each row into the record variable
-        FETCH emp_cursor INTO emp_record;
+        -- Fetch each row into the individual variables
+        FETCH emp_cursor INTO v_employee_id, v_first_name, v_last_name, v_salary;
         
-        -- Exit the loop when no more rows
+        -- Exit loop when no more rows
         EXIT WHEN emp_cursor%NOTFOUND;
 
-        -- Check salary condition
-        IF emp_record.salary < 7000 THEN
-            -- Update salary by 500
+        -- Check if salary is less than 7000
+        IF v_salary < 7000 THEN
+            -- Update salary by 500 for this employee only
             UPDATE employee
             SET salary = salary + 500
-            WHERE employee_id = emp_record.employee_id;
+            WHERE employee_id = v_employee_id;
 
             -- Display message
-            DBMS_OUTPUT.PUT_LINE('Salary updated for ' || emp_record.first_name || ' ' || emp_record.last_name || 
-                                 ' (ID: ' || emp_record.employee_id || ') - New Salary: ' || (emp_record.salary + 500));
+            DBMS_OUTPUT.PUT_LINE('Salary updated for ' || v_first_name || ' ' || v_last_name || 
+                                 ' (ID: ' || v_employee_id || ') - New Salary: ' || (v_salary + 500));
         ELSE
             -- Display message if no update
-            DBMS_OUTPUT.PUT_LINE('Salary not updated for ' || emp_record.first_name || ' ' || emp_record.last_name || 
-                                 ' (ID: ' || emp_record.employee_id || ') - Current Salary: ' || emp_record.salary);
+            DBMS_OUTPUT.PUT_LINE('Salary not updated for ' || v_first_name || ' ' || v_last_name || 
+                                 ' (ID: ' || v_employee_id || ') - Current Salary: ' || v_salary);
         END IF;
     END LOOP;
 
     -- Close the cursor
     CLOSE emp_cursor;
 
-    -- Commit changes
+    -- Commit updates
     COMMIT;
 
 END;
