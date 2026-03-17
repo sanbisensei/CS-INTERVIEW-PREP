@@ -1,3 +1,6 @@
+SET SERVEROUTPUT ON;
+set verify off;
+
 CREATE OR REPLACE FUNCTION calculate_scholarship (
     p_semester_fee IN NUMBER
 )
